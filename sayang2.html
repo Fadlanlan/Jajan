@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Jajanan Gratis - Dana Kaget</title>
+    <!-- Google Fonts untuk Tampilan Modern & Playful -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #ff7f50;
+            --accent: #ffeb3b;
+            --success: #2ed573;
+            --dana-blue: #0084ff;
+            --dark: #2f3542;
+            --light: #f1f2f6;
+            --bg-gradient: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            --shadow-hover: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Container Utama */
+        .quiz-wrapper {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            width: 100%;
+            max-width: 550px;
+        }
+
+        @keyframes fadeInSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 4px solid #fff;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Fredoka', cursive;
+            color: var(--primary);
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background-color: var(--light);
+            height: 12px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Animasi Card Pertanyaan */
+        .question-card {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 25px;
+        }
+
+        /* Pilihan Jawaban Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background-color: white;
+            border: 2px solid #e1e8ed;
+            padding: 18px 20px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Lexend', sans-serif;
+            font-weight: 600;
+            color: var(--dark);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        /* Hover & Klik Animasi */
+        .option-btn:hover {
+            border-color: var(--primary);
+            background-color: #fff5f6;
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .option-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .option-btn.selected {
+            border-color: var(--success);
+            background-color: #f0fff4;
+            color: var(--success);
+            transform: scale(0.98);
+        }
+
+        /* Bagian Hasil Akhir */
+        .result-section {
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s ease;
+        }
+
+        .result-section.show {
+            display: block;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .total-box {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: var(--dark);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            border: 3px dashed #fff;
+        }
+
+        .total-amount {
+            font-family: 'Fredoka', cursive;
+            font-size: 42px;
+            font-weight: bold;
+            color: #ff1744;
+            margin-top: 10px;
+            text-shadow: 2px 2px 0px white;
+        }
+
+        /* Tombol Dana Kaget */
+        .dana-btn {
+            background-color: var(--dana-blue);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 132, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            display: inline-block;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .dana-btn:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 132, 255, 0.6);
+        }
+
+        /* Efek denyut tombol */
+        .dana-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            animation: pulseEfek 1.8s infinite ease-out;
+        }
+
+        @keyframes pulseEfek {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(30); opacity: 0; }
+        }
+
+        /* Kelas animasi ganti pertanyaan */
+        .slide-out { opacity: 0; transform: translateX(-30px); }
+        .slide-in { opacity: 0; transform: translateX(30px); }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-wrapper">
+        <div class="quiz-container">
+            
+            <!-- Bagian Kuis Jajanan -->
+            <div id="quiz-section">
+                <h1>Toko Jajanan 🏪</h1>
+                <p class="subtitle">Pilih jajanan kesukaanmu untuk ditukarkan hadiah!</p>
+                
+                <div class="progress-container">
+                    <div class="progress" id="progress">
+                        <span class="progress-text" id="progress-text">0 / 5</span>
+                    </div>
+                </div>
+
+                <div class="question-card" id="question-card">
+                    <div class="question-text" id="question-text">Memuat menu...</div>
+                    <div class="options-grid" id="options-container">
+                        <!-- Pilihan jajanan masuk di sini -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Hasil Akhir -->
+            <div id="result-section" class="result-section">
+                <h1>🛒 Belanjaan Selesai! 🛒</h1>
+                <p class="subtitle">Semua jajanan pilihanmu sudah dimasukkan ke keranjang.</p>
+                
+                <div class="total-box">
+                    <p style="font-weight: 600;">For You<p>
+                    <div class="total-amount" id="total-amount">Rp0</div>
+                </div>
+
+                <p style="color: #7f8c8d; font-size: 15px; margin-bottom: 25px; line-height: 1.5;">
+                    Sayang aja yang beli yaa soal nya belum sempat ke sana😁
+                </p>
+
+                <!-- Taruh link Dana Kaget aslimu di href di bawah ini -->
+                <a href="https://link.dana.id/danakaget?c=srlajj9ws&r=dT5zEs&orderId=20260709101214111815010300166909188018288" target="_blank" class="dana-btn">
+                    🎁 Bukak ni Yangg
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script Confetti Efek Selamat -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/dist/confetti.browser.min.js"></script>
+
+    <script>
+        // Data Pertanyaan Sesuai Request Kamu
+        const quizData = [
+            {
+                question: "🥛 Mau minum susu apa?",
+                options: ["Ultra Milk", "Indomilk", "Bear Brand", "Cimory"]
+            },
+            {
+                question: "🍦 Mau es krim rasa apa?",
+                options: ["Cokelat Lumer", "Vanilla Lembut", "Strawberry Segar", "Matcha Greentea"]
+            },
+            {
+                question: "🍿 Mau snack apa?",
+                options: ["Chitato", "Taro", "Chiki Balls", "Qtela"]
+            },
+            {
+                question: "🍞 Mau roti apa?",
+                options: ["Sari Roti", "Roti Bakar", "Roti O", "Roti Tawar"]
+            },
+            {
+                question: "🍪 Mau biskuit apa?",
+                options: ["Oreo", "Good Time", "Roma Kelapa", "Slai O'Lai"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        const questionCard = document.getElementById('question-card');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progress = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        const totalAmountText = document.getElementById('total-amount');
+
+        function loadQuestion() {
+            const currentQuiz = quizData[currentQuestionIndex];
+            
+            // Animasi slide masuk
+            questionCard.classList.remove('slide-out');
+            questionCard.classList.add('slide-in');
+
+            setTimeout(() => {
+                questionText.innerText = currentQuiz.question;
+                
+                // Atur Progress Bar
+                const totalQuestions = quizData.length;
+                const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+                progress.style.width = `${progressPercent}%`;
+                progressText.innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+
+                // Kosongkan pilihan lama
+                optionsContainer.innerHTML = '';
+
+                // Tampilkan merk/rasa jajanan baru
+                currentQuiz.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.innerText = option;
+                    button.classList.add('option-btn');
+                    
+                    // Efek klik jawaban berganti otomatis ke soal berikutnya
+                    button.addEventListener('click', function() {
+                        button.classList.add('selected');
+                        setTimeout(handleNext, 250); // Jeda sedikit agar user melihat efek kliknya
+                    });
+                    
+                    optionsContainer.appendChild(button);
+                });
+
+                questionCard.classList.remove('slide-in');
+            }, 250);
+        }
+
+        function handleNext() {
+            currentQuestionIndex++;
+            questionCard.classList.add('slide-out');
+
+            if (currentQuestionIndex < quizData.length) {
+                setTimeout(loadQuestion, 250);
+            } else {
+                setTimeout(showResults, 250);
+            }
+        }
+
+        function showResults() {
+            quizSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            
+            setTimeout(() => {
+                resultSection.classList.add('show');
+            }, 50);
+
+            // Set total harga pas Rp50.000 sesuai permintaanmu
+            totalAmountText.innerText = "Rp50.000";
+
+            // Efek Pesta Kertas Selebrasi (Confetti)
+            triggerConfetti();
+        }
+
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // Mulai jalankan program saat halaman terbuka
+        loadQuestion();
+    </script>
+</body>
+</html>
